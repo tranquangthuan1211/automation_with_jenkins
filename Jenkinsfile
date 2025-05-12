@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = 'thuandocker' // ID đã lưu trong Jenkins
+        DOCKERHUB_CREDENTIALS = 'thuandocker'
         DOCKER_IMAGE = 'tqthuan2504/my-app'
-        IMAGE_TAG = "${env.BUILD_NUMBER}"
+        IMAGE_TAG = "latest"
     }
 
     stages {
