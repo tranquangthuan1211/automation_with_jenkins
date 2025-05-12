@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = 'thuandocker'
+        DOCKER_CREDENTIALS_ID = 'thuandocker'
         DOCKER_IMAGE = 'tqthuan2504/my-app'
         IMAGE_TAG = "latest"
     }
@@ -14,8 +14,9 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Docker Image and Push') {
             steps {
+                echo "Building Docker image with tag: ${env.IMAGE_TAG}"
                 script {
                      withCredentials([usernamePassword(
                         credentialsId: env.DOCKER_CREDENTIALS_ID,
