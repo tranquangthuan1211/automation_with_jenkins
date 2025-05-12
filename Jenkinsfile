@@ -20,7 +20,7 @@ pipeline {
                 script {
                     withDockerRegistry(credentialsId: 'docker-hub-cred', url: 'http://index.docker.io/v1') {
 
-                        sh "docker build -t app:${env.IMAGE_TAG} ."
+                        sh "sudo docker build -t app:${env.IMAGE_TAG} ."
                         
                     }
                 }
