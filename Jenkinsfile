@@ -17,21 +17,20 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}")
-                }
-            }
-        }
-
-        stage('Push to Docker Hub') {
-            steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
-                        docker.image("${DOCKER_IMAGE}:${IMAGE_TAG}").push()
+                     withCredentials([usernamePassword(
+                        credentialsId: env.DOCKER_CREDENTIALS_ID,
+                        usernameVariable: 'DOCKER_USERNAME',
+                        passwordVariable: 'DOCKER_PASSWORD'
+                    )]) {
+                        sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
+                        
+                        sh "docker build -t app:${env.IMAGE_TAG} ."
+                        sh "docker tag app:${env.IMAGE_TAG} ${env.DOCKER_IMAGE}:latest"
+                        sh "docker push ${env.DOCKER_IMAGE}:latest"
                     }
                 }
             }
         }
-
         stage('Deploy to Kubernetes') {
             steps {
                 script {
