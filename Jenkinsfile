@@ -18,11 +18,10 @@ pipeline {
             steps {
                 echo "Building Docker image with tag: ${env.IMAGE_TAG}"
                 script {
-                    withDockerRegistry(credentialsId: 'thuandocker', url: 'http://index.docker.io/v1') {
+                    withDockerRegistry(credentialsId: 'docker-hub-cred', url: 'http://index.docker.io/v1') {
 
                         sh "docker build -t app:${env.IMAGE_TAG} ."
-                        sh "docker tag app:${env.IMAGE_TAG} ${env.DOCKER_IMAGE}:latest"
-                        sh "docker push ${env.DOCKER_IMAGE}:latest"
+                        
                     }
                 }
             }
