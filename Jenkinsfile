@@ -17,15 +17,18 @@ pipeline {
         stage('Build Docker Image and Push') {
             steps {
                 echo "Building Docker image with tag: ${env.IMAGE_TAG}"
+                sh "../mvnw clean install -P buildDocker -DskipTests"
                 script {
-                    withDockerRegistry(credentialsId: 'docker-hub-cred', url: 'http://index.docker.io/v1') {
-
-                        sh "sudo docker build -t app:${env.IMAGE_TAG} ."
-                        
+                    withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIALS_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
+                        sh "docker tag ${imageName} ${imageName}:${commitId}"
+                        sh "docker push ${imageName}:${commitId}"
+                        sh "docker push ${imageName}:latest"
                     }
                 }
             }
         }
+        
         stage('Deploy to Kubernetes') {
             steps {
                 script {
